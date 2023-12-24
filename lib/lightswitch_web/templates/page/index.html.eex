@@ -1,0 +1,11 @@
+<!-- lib/your_static_server_web/templates/page/index.html.eex -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Static Page</title>
+</head>
+<body>
+  <h1>Hello, this is a static page!</h1>
+</body>
+</html>
