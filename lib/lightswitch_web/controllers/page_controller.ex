@@ -3,6 +3,14 @@ defmodule LightswitchWeb.PageController do
   use LightswitchWeb, :controller
 
   def index(conn, _params) do
-    render(conn, "index.html")
+    %{
+      id: "1",
+      link: "sensorxperience.com",
+      title: "The best website in the world"
+    }
+  end
+
+  def home(conn, _params) do
+    text conn, "Application Skeleton is running - #{Mix.env()}"
   end
 end

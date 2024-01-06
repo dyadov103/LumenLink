@@ -7,24 +7,15 @@ defmodule LightswitchWeb.Router do
 
   scope "/api", LightswitchWeb do
     pipe_through :api
-  end
-
-
-  pipeline :browser do
-    plug :accepts, ["html"]
-    plug :fetch_session
-    plug :fetch_flash
-    plug :protect_from_forgery
-    plug :put_secure_browser_headers
+    get "/", PageController, :index
+    post "/", DeviceController, :create
+    get "/list", DeviceController, :index
   end
 
   scope "/", LightswitchWeb do
-    pipe_through :browser
-
-    get "/", PageController, :index
+    pipe_through :api
+    get "/", PageController, :home
   end
-
-
 
   # Enables LiveDashboard only for development
   #
