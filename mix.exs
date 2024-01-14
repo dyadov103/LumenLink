@@ -20,7 +20,7 @@ defmodule Lightswitch.MixProject do
   def application do
     [
       mod: {Lightswitch.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :os_mon, :public_key]
     ]
   end
 
@@ -43,7 +43,9 @@ defmodule Lightswitch.MixProject do
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 0.18"},
       {:jason, "~> 1.2"},
-      {:plug_cowboy, "~> 2.5"}
+      {:plug_cowboy, "~> 2.5"},
+      #{:amqp, "~> 3.2"},
+      #{:rabbit_common, "~> 3.12.0"}
     ]
   end
 
