@@ -15,9 +15,10 @@ defmodule Lightswitch.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Lightswitch.PubSub},
       # Start the Endpoint (http/https)
-      LightswitchWeb.Endpoint
+      LightswitchWeb.Endpoint,
       # Start a worker by calling: Lightswitch.Worker.start_link(arg)
       # {Lightswitch.Worker, arg}
+      Lightswitch.Consumer
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

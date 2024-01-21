@@ -10,6 +10,7 @@ defmodule LightswitchWeb.Router do
     get "/", PageController, :index
     post "/", DeviceController, :create
     get "/list", DeviceController, :index
+    get "/downlink", DeviceController, :downlink
   end
 
   scope "/", LightswitchWeb do

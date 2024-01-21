@@ -1,13 +1,14 @@
-defmodule Consumer do
+defmodule Lightswitch.Consumer do
   use GenServer
   use AMQP
 
-  def start_link do
-    GenServer.start_link(__MODULE__, [], [])
+  def start_link(opts \\ [name: __MODULE__]) do
+    GenServer.start_link(__MODULE__, nil, opts)
   end
 
-  @exchange    "gen_server_test_exchange"
-  @queue       "gen_server_test_queue"
+  @exchange    "LumenLink_exchange"
+  @queue       "LumenLink_queue"
+  @qdown       "LumenLink_downlink_queue"
   @queue_error "#{@queue}_error"
 
   def init(_opts) do
@@ -45,6 +46,7 @@ defmodule Consumer do
 
   defp setup_queue(chan) do
     {:ok, _} = Queue.declare(chan, @queue_error, durable: true)
+    {:ok, _} = Queue.declare(chan, @qdown, durable: true)
     # Messages that cannot be delivered to any consumer in the main queue will be routed to the error queue
     {:ok, _} = Queue.declare(chan, @queue,
                              durable: true,
@@ -54,29 +56,19 @@ defmodule Consumer do
                              ]
                             )
     :ok = Exchange.fanout(chan, @exchange, durable: true)
-    :ok = Queue.bind(chan, @queue, @exchange)
+    :ok = Queue.bind(chan, @queue, "amq.topic", routing_key: "esp32.uplink.1")
+    :ok = Queue.bind(chan, @qdown, "amq.topic", routing_key: "esp32.downlink.1")
+
   end
 
   defp consume(channel, tag, redelivered, payload) do
-    number = String.to_integer(payload)
-    if number <= 10 do
-      :ok = Basic.ack channel, tag
-      IO.puts "Consumed a #{number}."
-    else
-      :ok = Basic.reject channel, tag, requeue: false
-      IO.puts "#{number} is too big and was rejected."
-    end
-
-  rescue
-    # Requeue unless it's a redelivered message.
-    # This means we will retry consuming a message once in case of exception
-    # before we give up and have it moved to the error queue
-    #
-    # You might also want to catch :exit signal in production code.
-    # Make sure you call ack, nack or reject otherwise consumer will stop
-    # receiving messages.
-    exception ->
-      :ok = Basic.reject channel, tag, requeue: not redelivered
-      IO.puts "Error converting #{payload} to integer"
+    case Jason.decode(payload) do
+      {:ok, parsed_data} ->
+        IO.puts("parsed packet: #{inspect{parsed_data}}")
+        IO.puts(Map.get(parsed_data, "deviceID"))
+      {:error, reason} ->
+        IO.puts("Error parsing JSON: #{reason}")
+      end
+    Basic.ack(channel, tag)
   end
 end

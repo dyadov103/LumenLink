@@ -1,6 +1,8 @@
 defmodule LightswitchWeb.DeviceController do
   use LightswitchWeb, :controller
 
+  use AMQP
+  use GenServer
   alias Lightswitch.Devices
   alias Lightswitch.Devices.Device
 
@@ -40,4 +42,12 @@ defmodule LightswitchWeb.DeviceController do
       send_resp(conn, :no_content, "")
     end
   end
+  def downlink(conn, _params) do
+    {:ok, connection} = AMQP.Connection.open
+    {:ok, channel} = AMQP.Channel.open(connection)
+    AMQP.Basic.publish(channel, "", "mqtt-subscription-1234qos0", "0100")
+    send_resp(conn, :no_content, "")
+
+  end
+
 end

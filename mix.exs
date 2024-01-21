@@ -7,7 +7,7 @@ defmodule Lightswitch.MixProject do
       version: "0.1.0",
       elixir: "~> 1.12",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:gettext] ++ Mix.compilers(),
+      #compilers: [:gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
@@ -20,7 +20,7 @@ defmodule Lightswitch.MixProject do
   def application do
     [
       mod: {Lightswitch.Application, []},
-      extra_applications: [:logger, :runtime_tools, :os_mon, :public_key]
+      extra_applications: [:logger, :runtime_tools, :amqp ]
     ]
   end
 
@@ -42,10 +42,10 @@ defmodule Lightswitch.MixProject do
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 0.18"},
-      {:jason, "~> 1.2"},
+      {:jason, "~> 1.4.1"},
       {:plug_cowboy, "~> 2.5"},
-      #{:amqp, "~> 3.2"},
-      #{:rabbit_common, "~> 3.12.0"}
+      {:amqp, "~> 3.2"},
+      {:rabbit_common, "~> 3.12.0"}
     ]
   end
 
